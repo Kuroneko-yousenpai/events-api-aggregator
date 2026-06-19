@@ -21,9 +21,8 @@ services:
     ports:
       - "8000:8000"
     environment:
-      DATABASE_URL: postgresql+asyncpg://app:secret@db:5432/events
       TEST_DATABASE_URL: postgresql+asyncpg://app:secret@db:5432/events_test
-      EVENTS_PROVIDER_BASE_URL: https://events-provider.dev-2.consollite.cc
+      EVENTS_PROVIDER_BASE_URL: ${EVENTS_PROVIDER_BASE_URL}
       EVENTS_PROVIDER_API_KEY: ${EVENTS_PROVIDER_API_KEY}
     depends_on:
       db:

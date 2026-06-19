@@ -19,7 +19,7 @@ DATABASE_URL = _build_database_url()
 
 EVENTS_PROVIDER_BASE_URL = os.getenv(
     "EVENTS_PROVIDER_BASE_URL",
-    "https://events-provider.dev-2.python-labs.ru",
+    "http://student-system-events-provider-web.student-system-events-provider.svc:8000",
 )
 
 EVENTS_PROVIDER_API_KEY = os.getenv("EVENTS_PROVIDER_API_KEY", "")

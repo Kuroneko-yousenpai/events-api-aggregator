@@ -80,6 +80,14 @@ class CancelTicketResponse(BaseModel):
 
 class SyncTriggerResponse(BaseModel):
     sync_status: str
+    detail: str | None = None
+
+
+class SyncStatusResponse(BaseModel):
+    sync_status: str
+    last_sync_time: datetime | None = None
+    last_changed_at: datetime | None = None
+    last_error: str | None = None
 
 
 class HealthResponse(BaseModel):
