@@ -3,7 +3,8 @@ from __future__ import annotations
 from datetime import datetime
 from uuid import UUID
 
-from sqlalchemy import func, select, update as sa_update
+from sqlalchemy import func, select
+from sqlalchemy import update as sa_update
 from sqlalchemy.dialects.postgresql import insert as pg_insert
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
@@ -117,11 +118,7 @@ class SqlAlchemyEventRepository:
         stmt = (
             sa_update(Event)
             .where(Event.id == event_id)
-            .values(
-                number_of_visitors=func.greatest(
-                    0, Event.number_of_visitors + delta
-                )
-            )
+            .values(number_of_visitors=func.greatest(0, Event.number_of_visitors + delta))
         )
         await self._session.execute(stmt)
         await self._session.flush()

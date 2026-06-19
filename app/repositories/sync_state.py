@@ -1,7 +1,6 @@
 from __future__ import annotations
 
-from datetime import datetime, timezone
-from typing import Optional
+from datetime import UTC, datetime
 
 from sqlalchemy.dialects.postgresql import insert as pg_insert
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -15,7 +14,7 @@ class SqlAlchemySyncStateRepository:
     def __init__(self, session: AsyncSession):
         self._session = session
 
-    async def get(self) -> Optional[SyncState]:
+    async def get(self) -> SyncState | None:
         return await self._session.get(SyncState, _SINGLETON_ID)
 
     async def _upsert(self, **fields) -> None:
@@ -30,10 +29,10 @@ class SqlAlchemySyncStateRepository:
     async def mark_running(self) -> None:
         await self._upsert(sync_status=SyncStatus.running.value, last_error=None)
 
-    async def mark_success(self, last_changed_at: Optional[datetime]) -> None:
+    async def mark_success(self, last_changed_at: datetime | None) -> None:
         fields = {
             "sync_status": SyncStatus.success.value,
-            "last_sync_time": datetime.now(timezone.utc),
+            "last_sync_time": datetime.now(UTC),
             "last_error": None,
         }
         if last_changed_at is not None:
@@ -43,6 +42,6 @@ class SqlAlchemySyncStateRepository:
     async def mark_failed(self, error: str) -> None:
         await self._upsert(
             sync_status=SyncStatus.failed.value,
-            last_sync_time=datetime.now(timezone.utc),
+            last_sync_time=datetime.now(UTC),
             last_error=error[:2000],
         )

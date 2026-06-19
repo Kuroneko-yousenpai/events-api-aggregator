@@ -1,7 +1,7 @@
 import os
 import uuid
 from collections.abc import AsyncGenerator
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 
 import pytest_asyncio
 from httpx import ASGITransport, AsyncClient
@@ -64,8 +64,8 @@ async def place(session: AsyncSession) -> Place:
         city="Moscow",
         address="Lenina st, 1",
         seats_pattern="A1-10,B1-10",
-        changed_at=datetime.now(timezone.utc),
-        created_at=datetime.now(timezone.utc),
+        changed_at=datetime.now(UTC),
+        created_at=datetime.now(UTC),
     )
     session.add(p)
     await session.commit()
@@ -75,7 +75,7 @@ async def place(session: AsyncSession) -> Place:
 
 @pytest_asyncio.fixture
 async def published_event(session: AsyncSession, place: Place) -> Event:
-    now = datetime.now(timezone.utc)
+    now = datetime.now(UTC)
     e = Event(
         id=uuid.uuid4(),
         name="Python Conference",
@@ -97,7 +97,7 @@ async def published_event(session: AsyncSession, place: Place) -> Event:
 
 @pytest_asyncio.fixture
 async def unpublished_event(session: AsyncSession, place: Place) -> Event:
-    now = datetime.now(timezone.utc)
+    now = datetime.now(UTC)
     e = Event(
         id=uuid.uuid4(),
         name="Draft Event",
@@ -119,7 +119,7 @@ async def unpublished_event(session: AsyncSession, place: Place) -> Event:
 
 @pytest_asyncio.fixture
 async def expired_event(session: AsyncSession, place: Place) -> Event:
-    now = datetime.now(timezone.utc)
+    now = datetime.now(UTC)
     e = Event(
         id=uuid.uuid4(),
         name="Past Conference",

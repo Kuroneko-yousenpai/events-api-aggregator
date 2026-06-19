@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from datetime import date, datetime, timezone
+from datetime import UTC, date, datetime
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException, Query, Request
@@ -42,7 +42,7 @@ async def list_events(
     usecase: ListEventsUsecase = Depends(get_list_events_usecase),
 ) -> EventListResponse:
     date_from_dt = (
-        datetime.combine(date_from, datetime.min.time(), tzinfo=timezone.utc)
+        datetime.combine(date_from, datetime.min.time(), tzinfo=UTC)
         if date_from is not None
         else None
     )

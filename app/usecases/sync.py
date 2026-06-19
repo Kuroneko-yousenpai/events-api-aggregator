@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import logging
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from uuid import UUID
 
 from app.config import EPOCH_SYNC_DATE
@@ -87,5 +87,5 @@ class SyncEventsUsecase:
 def _parse_dt(value: str) -> datetime:
     dt = datetime.fromisoformat(value)
     if dt.tzinfo is None:
-        dt = dt.replace(tzinfo=timezone.utc)
+        dt = dt.replace(tzinfo=UTC)
     return dt

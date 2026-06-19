@@ -1,4 +1,4 @@
-from datetime import timezone
+from datetime import UTC
 from unittest.mock import AsyncMock, patch
 
 import pytest
@@ -49,7 +49,7 @@ async def test_list_events_pagination(client: AsyncClient, session, place: Place
     import uuid
     from datetime import datetime, timedelta
 
-    now = datetime.now(timezone.utc)
+    now = datetime.now(UTC)
     for i in range(5):
         e = Event(
             id=uuid.uuid4(),

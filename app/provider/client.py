@@ -11,6 +11,7 @@ logger = logging.getLogger(__name__)
 class EventsProviderError(Exception):
     pass
 
+
 class EventNotFoundError(EventsProviderError):
     pass
 

@@ -58,7 +58,7 @@ class CreateTicketUsecase:
         if event.status != EventStatus.published.value:
             raise EventNotPublished(event_id)
 
-        if event.registration_deadline < dt.datetime.now(dt.timezone.utc):
+        if event.registration_deadline < dt.datetime.now(dt.UTC):
             raise RegistrationClosed(event_id)
 
         try:
