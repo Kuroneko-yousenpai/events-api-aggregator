@@ -145,7 +145,7 @@ async def test_create_ticket_invalid_email(client: AsyncClient, published_event:
         },
     )
 
-    assert response.status_code == 422
+    assert response.status_code == 400
 
 
 async def test_create_ticket_missing_fields(client: AsyncClient, published_event: Event):
@@ -154,7 +154,7 @@ async def test_create_ticket_missing_fields(client: AsyncClient, published_event
         json={"event_id": str(published_event.id), "email": "ivan@example.com"},
     )
 
-    assert response.status_code == 422
+    assert response.status_code == 400
 
 
 async def test_cancel_ticket_success(client: AsyncClient, published_event: Event, session):

@@ -3,6 +3,8 @@ import logging
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
+from fastapi.encoders import jsonable_encoder
+from fastapi.exceptions import RequestValidationError
 from starlette.responses import JSONResponse
 
 from app.config import (
@@ -77,6 +79,11 @@ app.include_router(health_router)
 app.include_router(sync_router)
 app.include_router(events_router)
 app.include_router(tickets_router)
+
+
+@app.exception_handler(RequestValidationError)
+async def validation_exception_handler(request, exc: RequestValidationError):
+    return JSONResponse(status_code=400, content={"detail": jsonable_encoder(exc.errors())})
 
 
 @app.exception_handler(RuntimeError)
