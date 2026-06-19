@@ -135,7 +135,7 @@ class EventsProviderClient:
         if response.status_code == 400:
             raise SeatNotAvailableError(seat)
 
-        if response.status_code != 201:
+        if response.status_code not in (200, 201):
             raise ProviderUnavailableError(
                 f"Unexpected status {response.status_code} registering for event"
             )
