@@ -1,9 +1,21 @@
 import os
 
-DATABASE_URL = os.getenv(
-    "DATABASE_URL",
-    "postgresql+asyncpg://app:secret@localhost:5432/events",
-)
+
+def _build_database_url() -> str:
+    if url := os.getenv("DATABASE_URL"):
+        return url
+
+    if conn_str := os.getenv("POSTGRES_CONNECTION_STRING"):
+        return conn_str.replace("postgres://", "postgresql+asyncpg://", 1)
+
+    host = os.getenv("POSTGRES_HOST", "localhost")
+    user = os.getenv("POSTGRES_USERNAME", "app")
+    password = os.getenv("POSTGRES_PASSWORD", "secret")
+    dbname = os.getenv("POSTGRES_DATABASE_NAME", "events")
+    return f"postgresql+asyncpg://{user}:{password}@{host}/{dbname}"
+
+
+DATABASE_URL = _build_database_url()
 
 EVENTS_PROVIDER_BASE_URL = os.getenv(
     "EVENTS_PROVIDER_BASE_URL",
