@@ -3,6 +3,7 @@ from __future__ import annotations
 from uuid import UUID
 
 from sqlalchemy import func
+from sqlalchemy.dialects.postgresql import insert as pg_insert
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models import Ticket
@@ -21,17 +22,33 @@ class SqlAlchemyTicketRepository:
         email: str,
         seat: str,
     ) -> Ticket:
-        ticket = Ticket(
-            id=ticket_id,
-            event_id=event_id,
-            first_name=first_name,
-            last_name=last_name,
-            email=email,
-            seat=seat,
+        stmt = (
+            pg_insert(Ticket)
+            .values(
+                id=ticket_id,
+                event_id=event_id,
+                first_name=first_name,
+                last_name=last_name,
+                email=email,
+                seat=seat,
+                is_cancelled=False,
+            )
+            .on_conflict_do_update(
+                index_elements=[Ticket.id],
+                set_={
+                    "event_id": event_id,
+                    "first_name": first_name,
+                    "last_name": last_name,
+                    "email": email,
+                    "seat": seat,
+                    "is_cancelled": False,
+                    "cancelled_at": None,
+                },
+            )
+            .returning(Ticket)
         )
-        self._session.add(ticket)
-        await self._session.flush()
-        return ticket
+        result = await self._session.execute(stmt)
+        return result.scalar_one()
 
     async def get(self, ticket_id: UUID) -> Ticket | None:
         return await self._session.get(Ticket, ticket_id)
