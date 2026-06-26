@@ -47,7 +47,7 @@ class GetSeatsUsecase:
         if event is None:
             raise EventNotFound(event_id)
 
-        if event.status != EventStatus.published.value:
+        if event.status != EventStatus.published:
             raise EventNotPublished(event_id)
 
         try:

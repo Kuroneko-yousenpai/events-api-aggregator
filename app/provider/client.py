@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import logging
 from typing import Any
+from urllib.parse import urljoin
 
 import httpx
 
@@ -41,6 +42,9 @@ class EventsProviderClient:
     def _headers(self) -> dict[str, str]:
         return {"x-api-key": self._api_key}
 
+    def _url(self, path: str) -> str:
+        return urljoin(f"{self._base_url}/", path)
+
     async def _request(
         self,
         method: str,
@@ -75,7 +79,7 @@ class EventsProviderClient:
         if cursor:
             params["cursor"] = cursor
 
-        response = await self._request("GET", f"{self._base_url}/api/events/", params=params)
+        response = await self._request("GET", self._url("api/events/"), params=params)
 
         if response.status_code != 200:
             raise ProviderUnavailableError(
@@ -95,7 +99,7 @@ class EventsProviderClient:
         return response.json()
 
     async def get_seats(self, event_id: str) -> list[str]:
-        response = await self._request("GET", f"{self._base_url}/api/events/{event_id}/seats/")
+        response = await self._request("GET", self._url(f"api/events/{event_id}/seats/"))
 
         if response.status_code == 404:
             raise EventNotFoundError(event_id)
@@ -120,7 +124,7 @@ class EventsProviderClient:
     ) -> str:
         response = await self._request(
             "POST",
-            f"{self._base_url}/api/events/{event_id}/register/",
+            self._url(f"api/events/{event_id}/register/"),
             json={
                 "first_name": first_name,
                 "last_name": last_name,
@@ -145,7 +149,7 @@ class EventsProviderClient:
     async def unregister(self, event_id: str, ticket_id: str) -> bool:
         response = await self._request(
             "DELETE",
-            f"{self._base_url}/api/events/{event_id}/unregister/",
+            self._url(f"api/events/{event_id}/unregister/"),
             json={"ticket_id": ticket_id},
         )
 
